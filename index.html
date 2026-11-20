@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c8401c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NGFW Eng">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>NGFW Engineer Practice Exam</title>
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--ink:#16202b;--muted:#5d6b7a;--line:#dde3ea;
+  --brand:#c8401c;--brand-ink:#fff;--ok:#1d7f46;--ok-bg:#e6f4ec;--bad:#b42318;--bad-bg:#fdecea;--flag:#b26a00;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0f141a;--card:#18202a;--ink:#e7edf3;--muted:#98a6b5;--line:#2a3542;--brand:#ff7a4d;--brand-ink:#0b1117;--ok:#5fd08f;--ok-bg:#16301f;--bad:#ff8a80;--bad-bg:#3a1a18;--flag:#f0b44c;}
+}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:760px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(60px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+h1{font-size:1.35rem;margin:4px 0 2px}
+h2{font-size:1.05rem;margin:22px 0 8px}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 14px;cursor:pointer}
+button.primary{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.big{display:block;width:100%;text-align:left;padding:14px}
+.big b{display:block}
+.big span{color:var(--muted);font-size:.85rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+.dom{margin:8px 0}
+.dom .lbl{display:flex;justify-content:space-between;font-size:.88rem}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--brand)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.top{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top);background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line);margin-bottom:12px}
+.timer{font-variant-numeric:tabular-nums;font-weight:600}
+.timer.low{color:var(--bad)}
+.tag{display:inline-block;font-size:.75rem;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:1px 8px}
+.qtext{font-size:1.05rem;margin:10px 0 14px;white-space:pre-wrap;overflow-wrap:anywhere}
+pre.code{font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0 0;overflow-x:auto;white-space:pre;font-weight:400}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{padding:6px 14px;border-radius:20px}
+.chips button.on{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;margin:8px 0;padding:12px}
+.opt .k{font-weight:700;min-width:1.2em}
+.opt.sel{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.explain{border-left:3px solid var(--brand);padding:8px 12px;margin-top:12px;background:var(--card);border-radius:0 8px 8px 0}
+.verdict{font-weight:700}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--bad)}
+.nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;margin-top:10px}
+.nav button{padding:6px 0;font-size:.8rem}
+.nav .ans{background:var(--line)}
+.nav .cur{outline:2px solid var(--brand)}
+.nav .fl{color:var(--flag);font-weight:700}
+.score{font-size:2.2rem;font-weight:700;margin:0}
+.pass{color:var(--ok)}.fail{color:var(--bad)}
+textarea{width:100%;min-height:140px;font:12px/1.4 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--ink)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal .card{max-width:420px;width:100%}
+.rev{border-top:1px solid var(--line);padding:12px 0}
+.rev:first-child{border-top:0}
+.note{font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="modal"></div>
+<script>
+const BANK=[];
+</script>
+<script src="bank/d1a.js"></script>
+<script src="bank/d1b.js"></script>
+<script src="bank/d2a.js"></script>
+<script src="bank/d2b.js"></script>
+<script src="bank/d3.js"></script>
+<script>
+const DOMAINS = {
+  1:{name:"PAN-OS Networking Configuration", w:"40", n:30},
+  2:{name:"PAN-OS Device Setting Configuration", w:"40", n:30},
+  3:{name:"Integration and Automation", w:"20", n:15}
+};
+const EXAM_N=75, EXAM_MIN=90, MINI_MIN=5;
+// BANK is filled by bank/d1a.js ... bank/d3.js
+// d=domain, q=question, o=options, a=correct option indexes, e=explanation
+// ---------- storage (fail-safe) ----------
+const KEY="ngfw-eng-practice-v1", SKEY="ngfw-eng-session-v1";
+let mem = {stats:{}, exams:[], size:10, study:false};
+function load(){ try{ const r=localStorage.getItem(KEY); if(r){ const p=JSON.parse(r); mem={stats:p.stats||{},exams:p.exams||[],size:p.size||10,study:!!p.study}; } }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+function saveSession(){ try{ if(S) localStorage.setItem(SKEY, JSON.stringify(S)); else localStorage.removeItem(SKEY);}catch(e){} }
+function loadSession(){ try{ const r=localStorage.getItem(SKEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
+load();
+
+// ---------- helpers ----------
+const $=s=>document.querySelector(s);
+const byId=Object.fromEntries(BANK.map(q=>[q.id,q]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const L="ABCDEFGH";
+const qhtml=s=>{const k=s.indexOf("\n\n"); return k<0?esc(s):esc(s.slice(0,k))+`<pre class="code">${esc(s.slice(k+2))}</pre>`;};
+function record(id, ok){ const s=mem.stats[id]||{s:0,c:0,w:false}; s.s++; if(ok)s.c++; s.w=!ok; mem.stats[id]=s; }
+function missedIds(){ return BANK.filter(q=>mem.stats[q.id]&&mem.stats[q.id].w).map(q=>q.id); }
+function domainStats(d){ let s=0,c=0,seen=0; BANK.filter(q=>q.d==d).forEach(q=>{const t=mem.stats[q.id]; if(t){s+=t.s;c+=t.c;seen++;}}); return {pct:s?Math.round(c/s*100):null,seen,total:BANK.filter(q=>q.d==d).length}; }
+function pick(ids){
+  const n=mem.size||ids.length;
+  const score=id=>{const t=mem.stats[id]; if(!t) return 0; if(t.w) return 1; return 2+t.c/t.s;};
+  return shuffle(ids).sort((a,b)=>score(a)-score(b)).slice(0,n);
+}
+function makeItem(id){ return {id, order:shuffle(byId[id].o.map((_,i)=>i))}; }
+function isRight(id, sel){ const a=byId[id].a; return sel && sel.length===a.length && a.every(x=>sel.includes(x)); }
+
+let S=null; // active session
+let timerH=null;
+
+// ---------- start modes ----------
+function startExam(){
+  let ids=[];
+  for(const d in DOMAINS){ ids=ids.concat(shuffle(BANK.filter(q=>q.d==d).map(q=>q.id)).slice(0,DOMAINS[d].n)); }
+  ids=shuffle(ids);
+  S={mode:"exam",study:!!mem.study,items:ids.map(makeItem),i:0,ans:{},flags:{},checked:{},endAt:Date.now()+EXAM_MIN*60*1000,title:"Full exam"};
+  saveSession(); render();
+}
+function startMini(){
+  const ids=pick5(BANK.map(q=>q.id));
+  S={mode:"exam",mini:true,study:!!mem.study,items:ids.map(makeItem),i:0,ans:{},flags:{},checked:{},endAt:Date.now()+MINI_MIN*60*1000,title:"5-question test"};
+  saveSession(); render();
+}
+function pick5(ids){
+  const score=id=>{const t=mem.stats[id]; if(!t) return 0; if(t.w) return 1; return 2+t.c/t.s;};
+  return shuffle(ids).sort((a,b)=>score(a)-score(b)).slice(0,5);
+}
+function startPractice(ids,title,kind){
+  if(!ids.length){ showModal("Nothing to practice here yet.",[["OK",closeModal]]); return; }
+  S={mode:"practice",items:shuffle(ids).map(makeItem),i:0,ans:{},flags:{},checked:{},title,kind:kind||null};
+  saveSession(); render();
+}
+function quick(){ startPractice(pick(BANK.map(q=>q.id)),"Quick practice",{t:"quick"}); }
+function drill(d){ startPractice(pick(BANK.filter(q=>q.d==d).map(q=>q.id)),DOMAINS[d].name,{t:"drill",d}); }
+function missed(){ startPractice(pick(missedIds()),"Missed questions",{t:"missed"}); }
+function nextSet(k){ S=null; if(k.t==="drill") drill(k.d); else if(k.t==="missed") missed(); else quick(); }
+const SIZES=[5,10,20,50,0];
+const sizeLbl=n=>n?String(n):"All";
+
+// ---------- modal ----------
+function showModal(msg,btns){
+  $("#modal").innerHTML=`<div class="modal"><div class="card"><p>${msg}</p><div class="row" style="justify-content:flex-end">${btns.map((b,i)=>`<button data-i="${i}" class="${i===btns.length-1?'primary':''}">${b[0]}</button>`).join("")}</div></div></div>`;
+  $("#modal").querySelectorAll("button").forEach(b=>b.onclick=()=>btns[+b.dataset.i][1]());
+}
+function closeModal(){ $("#modal").innerHTML=""; }
+
+// ---------- render ----------
+function render(){
+  clearInterval(timerH);
+  if(!S) return renderHome();
+  if(S.done) return renderResults();
+  renderQuestion();
+}
+
+function renderHome(){
+  const m=missedIds().length;
+  const last=mem.exams.slice(-5).reverse();
+  $("#app").innerHTML=`
+  <h1>NGFW Engineer Practice</h1>
+  <p class="sub">Palo Alto Networks Certified NGFW Engineer &middot; ${BANK.length} questions &middot; weighted to the exam datasheet blueprint</p>
+  <div class="grid">
+    <button class="big primary" id="bExam"><b>Full practice exam</b><span style="color:inherit;opacity:.85">${EXAM_N} questions &middot; ${mem.study?"study mode, no timer, answers as you go":EXAM_MIN+" min timer &middot; scored at the end"}</span></button>
+    <button class="big" id="bMini"><b>5-question test</b><span>${mem.study?"No timer, answers as you go":"Timed ("+MINI_MIN+" min), scored at the end"}, unseen first</span></button>
+    <button class="big" id="bQuick"><b>Quick practice</b><span>${mem.size?mem.size+" questions":"Every question"}, unseen first, answers shown as you go</span></button>
+    <button class="big" id="bMiss" ${m?"":"disabled"}><b>Missed questions</b><span>${m} to review${m&&mem.size&&m>mem.size?" &middot; "+mem.size+" at a time":""}</span></button>
+  </div>
+  <h2>Exam mode</h2>
+  <div class="card"><div class="chips" id="rules"><button data-r="0" class="${!mem.study?'on':''}">Exam</button><button data-r="1" class="${mem.study?'on':''}">Study</button></div>
+  <p class="note" style="margin-bottom:0">Exam is timed and scored at the end. Study has no timer and shows the answer and explanation after each question. Applies to the full exam and the 5-question test.</p></div>
+  <h2>Questions per practice session</h2>
+  <div class="card"><div class="chips" id="sizes">${SIZES.map(n=>`<button data-n="${n}" class="${(mem.size||0)===n?'on':''}">${sizeLbl(n)}</button>`).join("")}</div>
+  <p class="note" style="margin-bottom:0">Applies to quick practice, domain drills, and missed questions. Questions you haven't seen come first, then ones you missed.</p></div>
+  <h2>Drill a domain</h2>
+  <div class="card">${Object.entries(DOMAINS).map(([d,x])=>{const st=domainStats(d);return `
+    <div class="dom"><div class="lbl"><span><a href="#" data-d="${d}">${d}.0 ${x.name}</a> <span class="tag">${x.w}%</span></span><span class="muted">${st.pct===null?"not started":st.pct+"% &middot; "+st.seen+"/"+st.total+" seen"}</span></div>
+    <div class="bar"><i style="width:${st.pct||0}%"></i></div></div>`}).join("")}
+    <p class="note">Tap a domain to drill ${mem.size?mem.size+" questions":"every question"} from it.</p>
+  </div>
+  ${last.length?`<h2>Recent exams</h2><div class="card">${last.map(x=>`<div class="row small"><span>${new Date(x.t).toLocaleDateString()}</span><span class="spacer"></span><b class="${x.p>=70?'pass':'fail'}">${x.p}%</b><span class="muted">${x.c}/${x.n}</span></div>`).join("")}</div>`:""}
+  <h2>Your data</h2>
+  <div class="card small">
+    <p class="muted" style="margin-top:0">Progress saves in this browser only. Copy a backup now and then so you don't lose it.</p>
+    <div class="row"><button id="bBackup">Backup / restore</button><button id="bReset">Reset stats</button></div>
+  </div>
+  <p class="note">Palo Alto doesn't publish the pass mark, so treat 75%+ here as the target. Watch the wording: "BEST", "narrowest", "least downtime". Questions are original study material, not exam dumps.</p>`;
+  document.querySelectorAll("#sizes [data-n]").forEach(b=>b.onclick=()=>{mem.size=+b.dataset.n;save();render();});
+  document.querySelectorAll("#rules [data-r]").forEach(b=>b.onclick=()=>{mem.study=b.dataset.r==="1";save();render();});
+  $("#bExam").onclick=startExam; $("#bMini").onclick=startMini; $("#bQuick").onclick=quick; $("#bMiss").onclick=missed;
+  document.querySelectorAll("[data-d]").forEach(a=>a.onclick=e=>{e.preventDefault();drill(a.dataset.d);});
+  $("#bBackup").onclick=renderBackup;
+  $("#bReset").onclick=()=>showModal("Clear all stats and exam history?",[["Cancel",closeModal],["Clear",()=>{mem={stats:{},exams:[],size:mem.size,study:mem.study};save();closeModal();render();}]]);
+}
+
+function renderBackup(){
+  $("#app").innerHTML=`
+  <div class="top"><button id="bBack">&larr; Back</button><b>Backup / restore</b></div>
+  <div class="card"><b>Backup</b><p class="small muted">Copy this text and keep it somewhere (notes app, email to yourself).</p>
+  <textarea id="out" readonly>${esc(JSON.stringify(mem))}</textarea>
+  <div class="row"><button id="bCopy" class="primary">Copy</button><span id="cmsg" class="small muted"></span></div></div>
+  <div class="card"><b>Restore</b><p class="small muted">Paste a backup here. This replaces your current stats.</p>
+  <textarea id="in" placeholder="Paste backup text"></textarea>
+  <div class="row"><button id="bRestore" class="primary">Restore</button><span id="rmsg" class="small"></span></div></div>`;
+  $("#bBack").onclick=render;
+  $("#bCopy").onclick=async()=>{ const t=$("#out"); try{ await navigator.clipboard.writeText(t.value); $("#cmsg").textContent="Copied."; }catch(e){ t.select(); $("#cmsg").textContent="Selected. Copy it manually."; } };
+  $("#bRestore").onclick=()=>{ try{ const p=JSON.parse($("#in").value); if(!p||typeof p.stats!=="object") throw 0; mem={stats:p.stats,exams:p.exams||[],size:p.size||mem.size||10,study:!!p.study}; save(); $("#rmsg").textContent="Restored."; $("#rmsg").className="small pass"; }catch(e){ $("#rmsg").textContent="That doesn't look like a valid backup."; $("#rmsg").className="small fail"; } };
+}
+
+function fmt(ms){ ms=Math.max(0,ms); const m=Math.floor(ms/60000), s=Math.floor(ms%60000/1000); return m+":"+String(s).padStart(2,"0"); }
+
+function renderQuestion(){
+  clearInterval(timerH);
+  const it=S.items[S.i], q=byId[it.id], sel=S.ans[S.i]||[], multi=q.a.length>1, checked=S.checked[S.i];
+  const exam=S.mode==="exam", study=exam&&S.study;
+  const answered=Object.keys(S.ans).filter(k=>S.ans[k]&&S.ans[k].length).length;
+  $("#app").innerHTML=`
+  <div class="top">
+    <button id="bQuit">&times;</button>
+    <span class="small"><b>${S.i+1}</b> / ${S.items.length}</span>
+    <span class="spacer"></span>
+    ${exam&&!study?`<span class="timer" id="tmr"></span>`:`<span class="small muted">${esc(S.title)}</span>`}
+  </div>
+  <span class="tag">${q.d}.0 ${DOMAINS[q.d].name}</span> ${multi?`<span class="tag">Choose ${q.a.length}</span>`:""}
+  <div class="qtext">${qhtml(q.q)}</div>
+  <div id="opts">${it.order.map((oi,k)=>{
+    let cls="opt";
+    if(sel.includes(oi)) cls+=" sel";
+    if(checked){ if(q.a.includes(oi)) cls+=" right"; else if(sel.includes(oi)) cls+=" wrong"; }
+    return `<button class="${cls}" data-oi="${oi}" ${checked?"disabled":""}><span class="k">${L[k]}</span><span>${esc(q.o[oi])}</span></button>`;}).join("")}</div>
+  ${checked?`<div class="explain"><span class="verdict ${isRight(it.id,sel)?'ok':'no'}">${isRight(it.id,sel)?"Correct.":"Not quite."}</span> ${esc(q.e)}</div>`:""}
+  <div class="row" style="margin-top:14px">
+    ${exam?`<button id="bPrev" ${S.i?"":"disabled"}>Prev</button><button id="bFlag">${S.flags[S.i]?"Unflag":"Flag"}</button><span class="spacer"></span>
+      ${study&&!checked?`<button id="bCheck" class="primary" ${sel.length===q.a.length?"":"disabled"}>Check</button>`:""}
+      ${S.i<S.items.length-1?`<button id="bNext" class="${study&&!checked?"":"primary"}">Next</button>`:`<button id="bSubmit" class="${study&&!checked?"":"primary"}">Submit exam</button>`}`
+    :`${Object.keys(S.checked).length?`<button id="bEnd">End &amp; score</button>`:""}<span class="spacer"></span>${checked?(S.i<S.items.length-1?`<button id="bNext" class="primary">Next</button>`:`<button id="bFinish" class="primary">Finish</button>`):`<button id="bCheck" class="primary" ${sel.length===q.a.length?"":"disabled"}>Check</button>`}`}
+  </div>
+  ${exam?`<div class="card small"><div class="row"><span class="muted">${answered} answered &middot; ${Object.values(S.flags).filter(Boolean).length} flagged</span><span class="spacer"></span><button id="bSub2">Submit</button></div>
+    <div class="nav">${S.items.map((_,k)=>`<button data-j="${k}" class="${(S.ans[k]&&S.ans[k].length)?'ans':''} ${k===S.i?'cur':''} ${S.flags[k]?'fl':''}">${k+1}${S.flags[k]?"*":""}</button>`).join("")}</div></div>`:""}
+  `;
+  $("#bQuit").onclick=()=>showModal(exam?"Leave this exam? Progress on it will be lost.":"End this practice session?",[["Stay",closeModal],["Leave",()=>{S=null;saveSession();closeModal();render();}]]);
+  if(!checked) document.querySelectorAll("#opts .opt").forEach(b=>b.onclick=()=>{
+    const oi=+b.dataset.oi; let cur=(S.ans[S.i]||[]).slice();
+    if(multi){ cur=cur.includes(oi)?cur.filter(x=>x!==oi):(cur.length<q.a.length?[...cur,oi]:cur); } else cur=[oi];
+    S.ans[S.i]=cur; saveSession(); renderQuestion();
+  });
+  const go=j=>{S.i=j;saveSession();renderQuestion();window.scrollTo(0,0);};
+  if($("#bNext")) $("#bNext").onclick=()=>go(S.i+1);
+  if($("#bPrev")) $("#bPrev").onclick=()=>go(S.i-1);
+  if($("#bFlag")) $("#bFlag").onclick=()=>{S.flags[S.i]=!S.flags[S.i];saveSession();renderQuestion();};
+  if($("#bCheck")) $("#bCheck").onclick=()=>{S.checked[S.i]=true; if(!exam){ record(it.id,isRight(it.id,sel)); save(); } saveSession(); renderQuestion();};
+  if($("#bFinish")) $("#bFinish").onclick=finish;
+  if($("#bEnd")) $("#bEnd").onclick=finish;
+  const sub=()=>{ const un=S.items.length-answered; showModal(un?`${un} question${un>1?"s are":" is"} unanswered. Submit anyway?`:"Submit your exam?",[["Keep going",closeModal],["Submit",()=>{closeModal();finish();}]]); };
+  if($("#bSubmit")) $("#bSubmit").onclick=sub;
+  if($("#bSub2")) $("#bSub2").onclick=sub;
+  document.querySelectorAll(".nav [data-j]").forEach(b=>b.onclick=()=>go(+b.dataset.j));
+  if(exam&&!study){
+    const tick=()=>{ const left=S.endAt-Date.now(); const t=$("#tmr"); if(t){ t.textContent=fmt(left); t.classList.toggle("low",left<5*60000);} if(left<=0){ clearInterval(timerH); finish(); } };
+    tick(); timerH=setInterval(tick,1000);
+  }
+}
+
+function finish(){
+  clearInterval(timerH);
+  const per={}; let c=0;
+  S.items.forEach((it,k)=>{
+    const q=byId[it.id], ok=isRight(it.id,S.ans[k]);
+    if(S.mode==="exam") record(it.id,ok);
+    else if(!S.checked[k]) return;
+    per[q.d]=per[q.d]||{c:0,n:0}; per[q.d].n++; if(ok){per[q.d].c++;c++;}
+  });
+  const n=Object.values(per).reduce((a,b)=>a+b.n,0);
+  S.result={c,n,p:n?Math.round(c/n*100):0,per};
+  if(S.mode==="exam"&&!S.mini) mem.exams.push({t:Date.now(),c,n,p:S.result.p});
+  save(); S.done=true; saveSession(); render(); window.scrollTo(0,0);
+}
+
+function renderResults(){
+  const r=S.result; let wrongOnly=S.wrongOnly??true;
+  const list=S.items.map((it,k)=>({it,k})).filter(({it,k})=>S.mode==="exam"||S.checked[k]).filter(({it,k})=>!wrongOnly||!isRight(it.id,S.ans[k]));
+  $("#app").innerHTML=`
+  <div class="top"><button id="bHome">&larr; Home</button><b>${esc(S.title)} results</b></div>
+  <div class="card"><p class="score ${r.p>=70?'pass':'fail'}">${r.p}%</p><p class="muted" style="margin:0">${r.c} of ${r.n} correct${S.mode==="exam"?" &middot; target 75%+":""}</p></div>
+  <div class="card">${Object.entries(r.per).sort().map(([d,x])=>{const p=Math.round(x.c/x.n*100);return `
+    <div class="dom"><div class="lbl"><span>${d}.0 ${DOMAINS[d].name}</span><span class="${p>=70?'pass':'fail'}">${x.c}/${x.n} &middot; ${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join("")}</div>
+  <div class="row"><h2 style="margin:12px 0">Review</h2><span class="spacer"></span><button id="bToggle">${wrongOnly?"Show all":"Show missed only"}</button></div>
+  <div class="card">${list.length?list.map(({it,k})=>{const q=byId[it.id], sel=S.ans[k]||[], ok=isRight(it.id,sel);
+    return `<div class="rev"><div class="small muted">Q${k+1} &middot; ${q.d}.0 ${DOMAINS[q.d].name}</div>
+    <div style="margin:4px 0 6px;font-weight:700;white-space:pre-wrap">${qhtml(q.q)}</div>
+    <div class="small">Your answer: <span class="${ok?'pass':'fail'}">${sel.length?sel.map(i=>esc(q.o[i])).join("; "):"(none)"}</span></div>
+    ${ok?"":`<div class="small">Correct: <span class="pass">${q.a.map(i=>esc(q.o[i])).join("; ")}</span></div>`}
+    <div class="small muted" style="margin-top:4px">${esc(q.e)}</div></div>`}).join(""):`<p class="muted">Nothing missed. Nice.</p>`}</div>
+  <div class="row">${S.kind?`<button id="bNextSet" class="primary">Next ${mem.size||"set"}</button><button id="bAgain">Retry these</button>`:`<button id="bAgain" class="primary">${S.mini?"Another 5":S.mode==="exam"?"New exam":"Practice again"}</button>`}</div>`;
+  if($("#bNextSet")) $("#bNextSet").onclick=()=>nextSet(S.kind);
+  $("#bHome").onclick=()=>{S=null;saveSession();render();};
+  $("#bToggle").onclick=()=>{S.wrongOnly=!wrongOnly;renderResults();};
+  $("#bAgain").onclick=()=>{ const m=S.mode, mini=S.mini, ids=S.items.map(i=>i.id), t=S.title, k=S.kind; S=null; if(mini) startMini(); else if(m==="exam") startExam(); else startPractice(ids,t,k); };
+}
+
+// resume an in-progress session after refresh
+S=loadSession();
+if(S && S.mode==="exam" && !S.done && !(S.study||S.strict===false) && Date.now()>S.endAt){ finish(); }
+render();
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+</script>
+</body>
+</html>
