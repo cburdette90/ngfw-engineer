@@ -41,6 +41,8 @@ button:disabled{opacity:.45;cursor:default}
 .dom .lbl a:hover,.dom .lbl a:active{color:var(--brand);text-decoration:underline}
 .bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:4px}
 .bar i{display:block;height:100%;background:var(--brand)}
+.overall{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.overall .big-pct{font-size:2rem;font-weight:700;line-height:1;color:var(--brand)}
 .muted{color:var(--muted)}
 .small{font-size:.85rem}
 .top{display:flex;align-items:center;gap:10px;position:sticky;top:env(safe-area-inset-top);background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line);margin-bottom:12px}
@@ -114,6 +116,7 @@ const qhtml=s=>{const k=s.indexOf("\n\n"); return k<0?esc(s):esc(s.slice(0,k))+`
 function record(id, ok){ const s=mem.stats[id]||{s:0,c:0,w:false}; s.s++; if(ok)s.c++; s.w=!ok; mem.stats[id]=s; }
 function missedIds(){ return BANK.filter(q=>mem.stats[q.id]&&mem.stats[q.id].w).map(q=>q.id); }
 function domainStats(d){ let s=0,c=0,seen=0; BANK.filter(q=>q.d==d).forEach(q=>{const t=mem.stats[q.id]; if(t){s+=t.s;c+=t.c;seen++;}}); return {pct:s?Math.round(c/s*100):null,seen,total:BANK.filter(q=>q.d==d).length}; }
+function overallStats(){ let s=0,c=0,seen=0; BANK.forEach(q=>{const t=mem.stats[q.id]; if(t){s+=t.s;c+=t.c;seen++;}}); return {acc:s?Math.round(c/s*100):null,seen,total:BANK.length,cov:BANK.length?Math.round(seen/BANK.length*100):0}; }
 function pick(ids){
   const n=mem.size||ids.length;
   const score=id=>{const t=mem.stats[id]; if(!t) return 0; if(t.w) return 1; return 2+t.c/t.s;};
@@ -175,6 +178,9 @@ function renderHome(){
   $("#app").innerHTML=`
   <h1>NGFW Engineer Practice</h1>
   <p class="sub">Palo Alto Networks Certified NGFW Engineer &middot; ${BANK.length} questions &middot; weighted to the exam datasheet blueprint</p>
+  ${(()=>{const o=overallStats();return `<div class="card"><div class="overall"><span class="big-pct">${o.cov}%</span><b>overall progress</b></div>
+    <div class="bar"><i style="width:${o.cov}%"></i></div>
+    <p class="small muted" style="margin:6px 0 0">${o.seen}/${o.total} questions seen &middot; ${o.acc===null?"no answers yet":o.acc+"% correct"}</p></div>`})()}
   <div class="grid">
     <button class="big primary" id="bExam"><b>Full practice exam</b><span style="color:inherit;opacity:.85">${EXAM_N} questions &middot; ${mem.study?"study mode, no timer, answers as you go":EXAM_MIN+" min timer &middot; scored at the end"}</span></button>
     <button class="big" id="bMini"><b>5-question test</b><span>${mem.study?"No timer, answers as you go":"Timed ("+MINI_MIN+" min), scored at the end"}, unseen first</span></button>
